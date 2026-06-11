@@ -6962,6 +6962,7 @@
   <!-- MUSIC CONTROL -->
   <div class="music-box">
     <button id="playBtn" class="music-btn" type="button">♪</button>
+    <button id="fwSoundBtn" class="music-btn" type="button" title="ფეიერვერკის ხმა">🎆</button>
     <input type="range" id="volume" min="0" max="1" step="0.01" value="0.3">
   </div>
 
@@ -10746,6 +10747,80 @@
     init();
   </script>
   <script>
+    /* 🔊 ფეიერვერკის ხმა — Web Audio სინთეზი (ფაილის გარეშე) */
+    let fwCtx = null;
+    let fwSoundOn = true;
+    let fwInteracted = false;
+
+    function fwGetCtx() {
+      if (!fwCtx) {
+        try { fwCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        catch (e) { return null; }
+      }
+      if (fwCtx.state === "suspended") fwCtx.resume();
+      return fwCtx;
+    }
+
+    ["pointerdown", "keydown", "touchstart"].forEach(function (ev) {
+      window.addEventListener(ev, function () {
+        fwInteracted = true;
+        fwGetCtx();
+      }, { once: true, passive: true });
+    });
+
+    function playFireworkSound() {
+      if (!fwSoundOn || !fwInteracted) return;
+      const ctx = fwGetCtx();
+      if (!ctx) return;
+      const t = ctx.currentTime;
+
+      /* აფეთქების "ბუმი" — ხმაურის იმპულსი დაბალი ფილტრით */
+      const dur = 0.7;
+      const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2.2);
+      }
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.setValueAtTime(900, t);
+      lp.frequency.exponentialRampToValueAtTime(180, t + dur);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.18, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      src.connect(lp); lp.connect(g); g.connect(ctx.destination);
+      src.start(t);
+
+      /* ნაპერწკლების ტკაცუნი */
+      for (let k = 0; k < 5; k++) {
+        const ct = t + 0.12 + Math.random() * 0.4;
+        const o = ctx.createOscillator();
+        o.type = "triangle";
+        o.frequency.setValueAtTime(1400 + Math.random() * 1800, ct);
+        const cg = ctx.createGain();
+        cg.gain.setValueAtTime(0.0001, ct);
+        cg.gain.exponentialRampToValueAtTime(0.045, ct + 0.01);
+        cg.gain.exponentialRampToValueAtTime(0.0001, ct + 0.09);
+        o.connect(cg); cg.connect(ctx.destination);
+        o.start(ct); o.stop(ct + 0.1);
+      }
+    }
+
+    /* 🎆 ღილაკი ფლეიერში — ხმის ჩართვა/გამორთვა */
+    (function () {
+      const btn = document.getElementById("fwSoundBtn");
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        fwSoundOn = !fwSoundOn;
+        btn.style.opacity = fwSoundOn ? "1" : "0.35";
+        btn.title = fwSoundOn ? "ფეიერვერკის ხმა: ჩართულია" : "ფეიერვერკის ხმა: გამორთულია";
+        if (fwSoundOn) playFireworkSound();
+      });
+    })();
+
     /* 🎉 საიუბილეო ოქროს კონფეტი — ერთხელ, გვერდის გახსნისას */
     window.addEventListener("load", function () {
       if (typeof confetti === "undefined") return;
@@ -10762,6 +10837,7 @@
       /* 🎆 უწყვეტი ფეიერვერკები — ყოველ ~8 წამში მცირე ზალპი შემთხვევითი ადგილიდან */
       setInterval(function () {
         if (document.hidden) return;
+        playFireworkSound();
         confetti({
           particleCount: 20 + Math.floor(Math.random() * 18),
           angle: 55 + Math.random() * 70,
