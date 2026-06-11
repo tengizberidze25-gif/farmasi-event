@@ -1,0 +1,2825 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>შენი ბილეთი · FARMASI Georgia — 20 წელი</title>
+  <meta name="theme-color" content="#140e10" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="farmasi.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Montserrat:wght@400;500;600;700&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- QR Code library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --bg-deep: #0a0506;
+      --bg: #140e10;
+      --bg-card: #1f1518;
+      --pink: #ff6075;
+      --pink-dark: #e54a5f;
+      --pink-glow: rgba(255, 96, 117, 0.45);
+      --gold: #e8c468;
+      --gold-light: #f4d989;
+      --gold-dark: #c9a956;
+      --cream: #f5f0e8;
+      --cream-dim: #b5a89a;
+      --border: rgba(232, 196, 104, 0.18);
+      --border-strong: rgba(232, 196, 104, 0.32);
+
+      --display-font: 'Cormorant Garamond', 'Noto Sans Georgian', serif;
+      --geo-font: 'Noto Sans Georgian', 'Cormorant Garamond', serif;
+      --sans-font: 'Montserrat', 'Noto Sans Georgian', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: var(--bg-deep);
+      color: var(--cream);
+      font-family: var(--geo-font);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === Background — cinematic ambience === */
+    body {
+      background:
+        radial-gradient(ellipse at top,
+          rgba(232, 196, 104, 0.08) 0%,
+          transparent 50%),
+        radial-gradient(ellipse at bottom,
+          rgba(255, 96, 117, 0.06) 0%,
+          transparent 60%),
+        linear-gradient(180deg, var(--bg-deep) 0%, var(--bg) 50%, var(--bg-deep) 100%);
+      padding: max(20px, env(safe-area-inset-top)) 16px max(40px, env(safe-area-inset-bottom));
+    }
+
+    /* Floating gold particles */
+    .particle {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      animation: float 22s linear infinite;
+      box-shadow: 0 0 4px rgba(232, 196, 104, 0.5);
+      z-index: 0;
+    }
+
+    @keyframes float {
+      0% {
+        opacity: 0;
+        transform: translateY(100vh) translateX(0) scale(0.5);
+      }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.5; }
+      100% {
+        opacity: 0;
+        transform: translateY(-10vh) translateX(40px) scale(1.2);
+      }
+    }
+
+    .container {
+      max-width: 460px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* === HEADER === */
+    .ticket-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    /* ============================================ */
+    /* FARMASI LOGO — works on ALL devices          */
+    /* ============================================ */
+    .farmasi-logo {
+      margin: 0 auto 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      animation: logoFloat 4s ease-in-out infinite;
+      position: relative;
+    }
+
+    /* Real PNG logo - primary */
+    .farmasi-logo-img {
+      display: block;
+      width: 130px;
+      height: auto;
+      max-height: 60px;
+      object-fit: contain;
+      /* Blend mode removes white JPEG background, keeps logo elements */
+      mix-blend-mode: screen;
+      filter:
+        brightness(1.4)
+        contrast(1.2)
+        drop-shadow(0 0 18px rgba(232, 196, 104, 0.45))
+        drop-shadow(0 4px 10px rgba(255, 96, 117, 0.3));
+    }
+
+    /* Hide fallback if image loaded */
+    .farmasi-logo-img:not([data-failed]) ~ .farmasi-logo-fallback {
+      display: none;
+    }
+
+    /* CSS-only fallback (visible if image fails) */
+    .farmasi-logo-fallback {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .farmasi-logo-fallback span {
+      font-family: var(--display-font);
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      line-height: 1;
+      background: linear-gradient(135deg,
+        #f5d98a 0%,
+        var(--gold-light) 30%,
+        var(--gold) 50%,
+        var(--gold-dark) 80%,
+        #f5d98a 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(232, 196, 104, 0.5));
+    }
+
+    .farmasi-logo-fallback::before {
+      content: '✦';
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: 0;
+      opacity: 0.7;
+      filter: drop-shadow(0 0 6px rgba(232, 196, 104, 0.6));
+    }
+
+    /* When image fails, hide image and show fallback */
+    .farmasi-logo-img[data-failed] {
+      display: none;
+    }
+
+    .farmasi-logo-img[data-failed] ~ .farmasi-logo-fallback {
+      display: flex;
+    }
+
+    /* Responsive logo sizing — for ALL devices */
+    /* Tablets (portrait & landscape) */
+    @media (min-width: 481px) and (max-width: 1024px) {
+      .farmasi-logo-img {
+        width: 140px;
+        max-height: 65px;
+      }
+      .farmasi-logo-fallback span {
+        font-size: 28px;
+        letter-spacing: 6px;
+      }
+    }
+
+    /* Desktop */
+    @media (min-width: 1025px) {
+      .farmasi-logo-img {
+        width: 150px;
+        max-height: 70px;
+      }
+      .farmasi-logo-fallback span {
+        font-size: 30px;
+        letter-spacing: 7px;
+      }
+    }
+
+    /* Tiny phones (iPhone SE, small Android) */
+    @media (max-width: 380px) {
+      .farmasi-logo-img {
+        width: 110px;
+        max-height: 52px;
+      }
+      .farmasi-logo-fallback span {
+        font-size: 22px;
+        letter-spacing: 4px;
+      }
+    }
+
+    /* Landscape orientation on phone — make logo smaller */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .farmasi-logo-img {
+        width: 100px;
+        max-height: 46px;
+      }
+      .farmasi-logo {
+        margin-bottom: 8px;
+      }
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
+    }
+
+    .event-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.2),
+        rgba(255, 96, 117, 0.08));
+      border: 1px solid rgba(255, 96, 117, 0.4);
+      border-radius: 999px;
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--pink);
+      margin-bottom: 12px;
+    }
+
+    .ticket-page-title {
+      font-family: var(--display-font);
+      font-size: 30px;
+      font-weight: 500;
+      line-height: 1.1;
+      color: var(--cream);
+      margin-bottom: 6px;
+    }
+
+    .ticket-page-title .accent {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .ticket-page-subtitle {
+      font-family: var(--sans-font);
+      font-size: 11px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+    }
+
+    /* === LOADING === */
+    .loading-state, .error-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(232, 196, 104, 0.2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-state p,
+    .error-state p {
+      font-family: var(--sans-font);
+      font-size: 12px;
+      letter-spacing: 0.8px;
+      color: var(--cream-dim);
+    }
+
+    .error-state {
+      display: none;
+    }
+
+    .error-state.show { display: block; }
+    .loading-state.hide { display: none; }
+
+    .error-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    .error-title {
+      font-family: var(--display-font);
+      font-size: 22px;
+      color: var(--cream);
+      margin-bottom: 8px;
+    }
+
+    .error-back {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white;
+      text-decoration: none;
+      border-radius: 999px;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 14px var(--pink-glow);
+    }
+
+    /* === TICKET CONTENT (initially hidden) === */
+    .ticket-content {
+      display: none;
+      animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .ticket-content.show { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* === MAIN TICKET CARD === */
+    .ticket-card {
+      background:
+        linear-gradient(135deg,
+          rgba(232, 196, 104, 0.05) 0%,
+          rgba(255, 96, 117, 0.03) 100%),
+        var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 22px;
+      padding: 24px 18px 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(232, 196, 104, 0.1);
+      margin-bottom: 16px;
+    }
+
+    /* Top golden glow line */
+    .ticket-card::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 18%;
+      right: 18%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      filter: blur(1px);
+    }
+
+    /* Tier badge */
+    .tier-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-family: var(--sans-font);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      margin: 0 auto 14px;
+    }
+
+    .tier-pill.tier-early {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      color: #1a1212;
+      box-shadow: 0 4px 14px rgba(232, 196, 104, 0.35);
+    }
+
+    .tier-pill.tier-vip {
+      background: linear-gradient(135deg, #d8bfff, #b793ff);
+      color: #1a1212;
+      box-shadow: 0 4px 14px rgba(184, 147, 255, 0.35);
+    }
+
+    .tier-pill.tier-standard {
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white;
+      box-shadow: 0 4px 14px var(--pink-glow);
+    }
+
+    /* QR Code */
+    .qr-wrap {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 14px;
+      padding: 10px;
+      background: white;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.5),
+        0 0 0 4px rgba(232, 196, 104, 0.15);
+    }
+
+    .qr-wrap img,
+    .qr-wrap canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .ticket-card-center { text-align: center; }
+
+    .ticket-id {
+      font-family: var(--sans-font);
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+
+    .ticket-name {
+      font-family: var(--display-font);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    .ticket-meta {
+      font-family: var(--sans-font);
+      font-size: 11px;
+      color: var(--cream-dim);
+      letter-spacing: 0.4px;
+      margin-bottom: 14px;
+    }
+
+    /* Seat pill — interactive button */
+    .ticket-seat {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: linear-gradient(135deg,
+        rgba(232, 196, 104, 0.22),
+        rgba(232, 196, 104, 0.1));
+      border: 1.5px solid var(--gold);
+      border-radius: 999px;
+      box-shadow:
+        0 4px 14px rgba(232, 196, 104, 0.25),
+        0 0 20px rgba(232, 196, 104, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      font-family: inherit;
+      color: inherit;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      touch-action: manipulation;
+      pointer-events: auto;
+      z-index: 5;
+    }
+
+    /* Make sure children don't block clicks */
+    .ticket-seat * {
+      pointer-events: none;
+    }
+
+    .ticket-seat:hover,
+    .ticket-seat:focus {
+      transform: translateY(-2px) scale(1.04);
+      box-shadow:
+        0 10px 26px rgba(232, 196, 104, 0.5),
+        0 0 30px rgba(232, 196, 104, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      background: linear-gradient(135deg,
+        rgba(232, 196, 104, 0.32),
+        rgba(232, 196, 104, 0.16));
+      border-color: var(--gold-light);
+    }
+
+    .ticket-seat:active {
+      transform: translateY(0) scale(1);
+    }
+
+    .ticket-seat::after {
+      content: '👁';
+      font-size: 12px;
+      opacity: 0.7;
+      margin-left: 4px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .ticket-seat:hover::after {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+
+    .ticket-seat-icon { font-size: 14px; }
+
+    .ticket-seat-label {
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .ticket-seat-num {
+      font-family: var(--display-font);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--cream);
+      letter-spacing: 0.5px;
+    }
+
+    /* === TRANSPORT INFO === */
+    .ticket-transport {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.06),
+        rgba(232, 196, 104, 0.03));
+      border: 1px solid rgba(232, 196, 104, 0.18);
+      border-radius: 14px;
+    }
+
+    .ticket-transport-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid rgba(232, 196, 104, 0.12);
+    }
+
+    .ticket-transport-icon { font-size: 16px; }
+
+    .ticket-transport-title {
+      font-family: var(--display-font);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cream);
+    }
+
+    .ticket-transport-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+      padding: 4px 0;
+    }
+
+    .ttr-label {
+      font-family: var(--sans-font);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .ttr-value {
+      font-family: var(--geo-font);
+      color: var(--cream);
+      text-align: right;
+      line-height: 1.35;
+    }
+
+    .ticket-transport-map {
+      display: block;
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white !important;
+      text-decoration: none;
+      text-align: center;
+      border-radius: 10px;
+      font-family: var(--sans-font);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      box-shadow: 0 3px 10px var(--pink-glow);
+      transition: transform 0.2s;
+    }
+
+    .ticket-transport-map:hover {
+      transform: translateY(-1px);
+    }
+
+    /* === ACTION GRID (calendar buttons) === */
+    .section-label {
+      font-family: var(--sans-font);
+      font-size: 9px;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+      margin: 18px 0 10px;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--cream);
+      text-decoration: none;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background: rgba(232, 196, 104, 0.06);
+      border-color: var(--gold);
+      transform: translateY(-1px);
+    }
+
+    .action-btn .ico { font-size: 14px; }
+
+    /* === SHARE === */
+    .share-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .share-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--cream);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .share-btn:hover {
+      background: rgba(232, 196, 104, 0.1);
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    /* === CANCEL SECTION === */
+    /* === TRANSPORT CHANGE === */
+    .transport-change-section {
+      margin: 20px 0 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(232, 196, 104, 0.2);
+    }
+
+    .transport-change-toggle {
+      width: 100%;
+      background: rgba(232, 196, 104, 0.07);
+      border: none;
+      color: var(--gold);
+      font-family: var(--geo-font);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 14px 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.2s;
+    }
+    .transport-change-toggle:hover { background: rgba(232, 196, 104, 0.13); }
+    .transport-change-toggle .transport-change-icon { font-size: 18px; }
+
+    .transport-change-area {
+      display: none;
+      padding: 18px;
+      border-top: 1px solid rgba(232, 196, 104, 0.15);
+      background: rgba(0,0,0,0.25);
+    }
+    .transport-change-area.show { display: block; }
+
+    .tc-step { }
+    .tc-step.hide { display: none !important; }
+
+    .tc-hint {
+      font-size: 13px;
+      color: var(--cream-dim);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .tc-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tc-input {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      color: var(--cream);
+      font-family: var(--geo-font);
+      font-size: 15px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .tc-input:focus { border-color: var(--gold); }
+    .tc-input-otp { letter-spacing: 6px; font-size: 20px; text-align: center; max-width: 120px; }
+
+    .tc-btn-send {
+      background: var(--gold);
+      color: #1a0a10;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--geo-font);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 16px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s, background 0.2s;
+    }
+    .tc-btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+    .tc-btn-send:hover:not(:disabled) { background: var(--gold-light); }
+
+    .tc-resend {
+      background: none;
+      border: none;
+      color: var(--cream-dim);
+      font-family: var(--geo-font);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 4px 0;
+      text-decoration: underline;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .tc-resend:hover { color: var(--gold); }
+
+    .tc-msg {
+      font-size: 13px;
+      min-height: 18px;
+      padding: 6px 0;
+      transition: all 0.2s;
+    }
+    .tc-msg.ok { color: #6ddea0; }
+    .tc-msg.err { color: #ff7088; }
+
+    .tc-transport-btns {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .tc-transport-opt {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--cream);
+      font-family: var(--geo-font);
+      cursor: pointer;
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .tc-transport-opt:hover { border-color: var(--gold); background: rgba(232,196,104,0.08); }
+    .tc-transport-opt.selected { border-color: var(--gold); background: rgba(232,196,104,0.12); }
+
+    .tc-opt-icon { font-size: 24px; }
+    .tc-opt-label { font-size: 13px; font-weight: 600; }
+    .tc-opt-sub { font-size: 11px; color: var(--cream-dim); }
+
+    .tc-success {
+      text-align: center;
+      padding: 20px 0 8px;
+    }
+    .tc-success-icon {
+      font-size: 40px;
+      color: #6ddea0;
+      margin-bottom: 8px;
+    }
+    .tc-success-text {
+      font-size: 15px;
+      color: var(--cream);
+      font-weight: 600;
+    }
+
+    .cancel-section {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px dashed rgba(232, 196, 104, 0.15);
+      position: relative;
+    }
+
+    .cancel-section::before {
+      content: '⚠️';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-deep);
+      padding: 0 10px;
+      font-size: 14px;
+    }
+
+    .cancel-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 16px;
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.12) 0%,
+        rgba(255, 96, 117, 0.06) 100%);
+      border: 1.5px solid rgba(255, 96, 117, 0.4);
+      border-radius: 12px;
+      color: var(--pink);
+      font-family: var(--sans-font);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow:
+        0 3px 12px rgba(255, 96, 117, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle scanning line animation */
+    .cancel-toggle::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 96, 117, 0.2),
+        transparent);
+      animation: cancelScan 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes cancelScan {
+      0%   { left: -100%; }
+      50%, 100% { left: 200%; }
+    }
+
+    .cancel-toggle:hover {
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.2) 0%,
+        rgba(255, 96, 117, 0.1) 100%);
+      border-color: var(--pink);
+      transform: translateY(-1px);
+      box-shadow:
+        0 6px 18px rgba(255, 96, 117, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .cancel-toggle.active {
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.25) 0%,
+        rgba(255, 96, 117, 0.15) 100%);
+      border-color: var(--pink);
+      color: white;
+      box-shadow:
+        0 8px 22px rgba(255, 96, 117, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .cancel-toggle .cancel-icon {
+      font-size: 14px;
+      filter: drop-shadow(0 0 4px rgba(255, 96, 117, 0.5));
+    }
+
+    .cancel-area {
+      display: none;
+      margin-top: 12px;
+      padding: 16px 14px;
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.06),
+        rgba(255, 96, 117, 0.02));
+      border: 1px solid rgba(255, 96, 117, 0.2);
+      border-radius: 14px;
+    }
+
+    .cancel-area.show { display: block; }
+
+    .cancel-warning {
+      margin-bottom: 14px;
+      font-family: var(--sans-font);
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: var(--cream-dim);
+      text-align: center;
+    }
+
+    .cancel-warning strong {
+      color: var(--pink);
+      font-weight: 700;
+    }
+
+    .btn-cancel-confirm,
+    .btn-cancel-back {
+      display: block;
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-family: var(--sans-font);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-cancel-confirm {
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #d63653, #b62a44);
+      border: 1px solid rgba(255, 96, 117, 0.5);
+      color: white;
+      box-shadow: 0 4px 12px rgba(214, 54, 83, 0.3);
+    }
+
+    .btn-cancel-confirm:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(214, 54, 83, 0.5);
+    }
+
+    .btn-cancel-confirm:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-cancel-back {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--cream-dim);
+    }
+
+    .btn-cancel-back:hover {
+      border-color: rgba(232, 196, 104, 0.3);
+      color: var(--gold);
+    }
+
+    .cancel-msg {
+      display: none;
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .cancel-msg.show { display: block; }
+
+    .cancel-msg.success {
+      background: rgba(60, 200, 120, 0.12);
+      border: 1px solid rgba(60, 200, 120, 0.3);
+      color: #6dd49a;
+    }
+
+    .cancel-msg.error {
+      background: rgba(255, 96, 117, 0.12);
+      border: 1px solid rgba(255, 96, 117, 0.3);
+      color: var(--pink);
+    }
+
+    /* === BACK LINK === */
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 24px;
+      padding: 12px;
+      color: var(--cream-dim);
+      text-decoration: none;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      letter-spacing: 0.4px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--gold);
+    }
+
+    /* ============================================ */
+    /* BUS MODAL — full screen seat map             */
+    /* ============================================ */
+    /* ============================================================================
+       TICKET.HTML — BUS MODAL (OPERA BURGUNDY)
+       Replaces lines 922-2042 in ticket.html (the entire bus modal CSS block)
+       ============================================================================ */
+
+    /* ===== MODAL OVERLAY ===== */
+    .bus-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 5, 8, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      z-index: 1000;
+      overflow-y: auto;
+      padding: 20px 12px;
+    }
+    .bus-modal.show { display: flex; }
+
+    .bus-modal-content {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      background: linear-gradient(180deg, #1f0e14, #15050a);
+      border: 1px solid rgba(232, 196, 104, 0.3);
+      border-radius: 20px;
+      padding: 22px 18px 26px;
+      box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(232, 196, 104, 0.1);
+      margin: auto;
+    }
+
+    .bus-modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 32px;
+      height: 32px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(232, 196, 104, 0.3);
+      border-radius: 50%;
+      color: #ffe4a0;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      z-index: 5;
+    }
+    .bus-modal-close:hover {
+      background: rgba(232, 196, 104, 0.15);
+      border-color: #ffe4a0;
+    }
+
+    /* ===== TITLE ===== */
+    .bus-modal-subtitle {
+      font-family: var(--display-font);
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(232, 196, 104, 0.7);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .bus-modal-title {
+      font-family: var(--display-font);
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--cream);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .bus-modal-title .accent {
+      color: #ffe4a0;
+      font-style: italic;
+    }
+
+    /* ===== STATS ===== */
+    .bus-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .bus-stat {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(232, 196, 104, 0.18);
+      border-radius: 10px;
+      padding: 10px 6px;
+      text-align: center;
+    }
+    .bus-stat-value {
+      font-family: var(--display-font);
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .bus-stat-value.your  { color: #ffe4a0; }
+    .bus-stat-value.taken { color: #c4546a; }
+    .bus-stat-value.free  { color: #e8c468; }
+
+    .bus-stat-label {
+      font-family: var(--sans-font);
+      font-size: 9px;
+      letter-spacing: 0.6px;
+      color: var(--cream-dim);
+      text-transform: uppercase;
+    }
+
+    /* ===== LEGEND ===== */
+    .bus-legend {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      padding: 8px 10px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(232, 196, 104, 0.18);
+      border-radius: 10px;
+    }
+    .bus-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      letter-spacing: 0.4px;
+      color: var(--cream-dim);
+    }
+    .bus-legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+    .bus-legend-free {
+      background: linear-gradient(165deg, #6b1e2e, #2a0a12);
+      border: 1px solid #8a3344;
+    }
+    .bus-legend-taken {
+      background: linear-gradient(165deg, #2a0d14, #15050a);
+      border: 1px solid #3a1320;
+    }
+    .bus-legend-yours {
+      background: linear-gradient(165deg, #ffe4a0, #c9a956);
+      border: 1px solid #ffe4a0;
+      box-shadow: 0 0 6px rgba(232, 196, 104, 0.6);
+    }
+
+    /* ============================================================================
+       BUS INTERIOR — OUTER DARK STAGE
+       ============================================================================ */
+    .bus-interior {
+      position: relative;
+      width: 100%;
+      margin: 0 auto;
+      padding: 100px 14px 24px;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(220, 80, 80, 0.12), transparent 60%),
+        radial-gradient(ellipse at 50% 50%, #2a0a14, #15050a 70%);
+      border-radius: 18px;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .bus-interior::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.7) 100%);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* ===== LED AMBIENT STRIPS ===== */
+    .bus-led-strip {
+      position: absolute;
+      top: 230px;
+      bottom: 50px;
+      width: 2px;
+      background: linear-gradient(180deg,
+        transparent,
+        rgba(232, 196, 104, 0.7) 20%,
+        rgba(232, 196, 104, 0.7) 80%,
+        transparent);
+      filter: blur(0.5px);
+      animation: busLedFlow 6s ease-in-out infinite;
+      z-index: 1;
+    }
+    .bus-led-l { left: 4px; }
+    .bus-led-r { right: 4px; animation-delay: 3s; }
+    @keyframes busLedFlow { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.95; } }
+
+    /* ============================================================================
+       BUS SHELL — wine bus body
+       ============================================================================ */
+    .bus-shell {
+      position: relative;
+      width: 280px;
+      margin: 0 auto;
+      background:
+        repeating-linear-gradient(0deg,
+          transparent 0 20px,
+          rgba(0, 0, 0, 0.35) 20px 21px),
+        linear-gradient(180deg, #3d0f1a, #1a050a);
+      border: 1px solid rgba(232, 196, 104, 0.3);
+      border-radius: 80px 80px 30px 30px;
+      padding: 14px 18px;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
+    }
+
+    /* ===== HEADLIGHT BEAMS ===== */
+    .bus-beam {
+      position: absolute;
+      top: -90px;
+      width: 96px;
+      height: 100px;
+      background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(255, 240, 200, 0.05) 14%,
+        rgba(255, 240, 200, 0.15) 38%,
+        rgba(255, 220, 140, 0.4) 65%,
+        rgba(255, 240, 200, 0.55) 92%,
+        rgba(255, 230, 170, 0.8) 100%);
+      clip-path: polygon(46% 100%, 54% 100%, 100% 0%, 0% 0%);
+      filter: blur(3px);
+      pointer-events: none;
+      z-index: 4;
+      animation: busBeamPulse 2.4s ease-in-out infinite;
+    }
+    .bus-beam-l { left: 0; }
+    .bus-beam-r { right: 0; }
+    @keyframes busBeamPulse { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
+
+    /* ===== HEADLIGHT BULBS ===== */
+    .bus-headlight {
+      position: absolute;
+      top: 6px;
+      width: 20px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at 50% 40%,
+        #fff0c0 0%,
+        #ffd870 30%,
+        #c9a956 60%,
+        rgba(232, 196, 104, 0.4) 85%,
+        transparent 100%);
+      box-shadow:
+        0 0 12px 2px rgba(255, 230, 160, 0.95),
+        0 0 28px 6px rgba(232, 196, 104, 0.7),
+        0 0 55px 12px rgba(200, 160, 80, 0.4);
+      z-index: 6;
+      animation: busHlPulse 2.4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .bus-headlight-l { left: 42px; }
+    .bus-headlight-r { right: 42px; }
+    @keyframes busHlPulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.18); } }
+
+    /* ============================================================================
+       DRIVER COCKPIT — left steering, right dashboard
+       ============================================================================ */
+    .bus-driver-cabin {
+      position: relative;
+      height: 130px;
+      margin: 0 -8px 16px;
+      border-bottom: 1px solid rgba(232, 196, 104, 0.22);
+    }
+
+    .bus-windshield {
+      position: absolute;
+      top: 4px;
+      left: 8px;
+      right: 8px;
+      height: 56px;
+      background: linear-gradient(180deg,
+        rgba(120, 30, 50, 0.3),
+        rgba(80, 15, 30, 0.4) 50%,
+        rgba(40, 5, 15, 0.5));
+      border: 1px solid rgba(232, 196, 104, 0.35);
+      border-radius: 60px 60px 8px 8px;
+      overflow: hidden;
+    }
+    .bus-windshield::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.18) 50%,
+        transparent 70%);
+      background-size: 250% 100%;
+      animation: busGlassReflect 7s linear infinite;
+    }
+    @keyframes busGlassReflect {
+      0%   { background-position: -100% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .bus-dashboard {
+      position: absolute;
+      bottom: 6px;
+      left: 0;
+      right: 0;
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 10px;
+      align-items: end;
+      padding: 0 12px;
+      height: 64px;
+    }
+
+    .bus-driver-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      position: relative;
+    }
+
+    /* hide old labels */
+    .bus-driver-cell, .bus-driver-label, .bus-amenities, .bus-amenity,
+    .bus-entrance-row, .bus-door-frame, .bus-door, .bus-door-side,
+    .bus-door-split, .bus-entrance-text, .bus-entrance-arrow,
+    .bus-emergency, .bus-windows-left, .bus-windows-right, .bus-window {
+      display: none !important;
+    }
+
+    /* ===== STEERING WHEEL (SVG) ===== */
+    .bus-steering {
+      width: 42px;
+      height: 42px;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+      animation: busWheelSubtle 8s ease-in-out infinite;
+    }
+    @keyframes busWheelSubtle { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+    .bus-steering .rim       { stroke: #2a0a14; fill: none; }
+    .bus-steering .rim-glow  { stroke: rgba(232, 196, 104, 0.7); fill: none; opacity: 0.5; }
+    .bus-steering .rim-inner { stroke: #ffe4a0; fill: none; opacity: 0.6; }
+    .bus-steering .spoke     { stroke: #2a0a14; stroke-linecap: round; }
+    .bus-steering .hub       { fill: #15050a; stroke: #ffe4a0; }
+    .bus-steering .logo      { fill: #ffe4a0; font-family: var(--display-font); }
+
+    /* ===== DRIVER CHAIR ===== */
+    .bus-driver-seat {
+      width: 28px;
+      height: 14px;
+      background: linear-gradient(165deg, #4a1320, #1a050a);
+      border: 1px solid #8a3344;
+      border-radius: 5px 5px 3px 3px;
+      position: relative;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(232, 196, 104, 0.15);
+    }
+    .bus-driver-seat::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 5px;
+      right: 5px;
+      height: 3px;
+      background: linear-gradient(165deg, #4a1320, #1a050a);
+      border: 1px solid #8a3344;
+      border-bottom: none;
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* ===== DASHBOARD SCREEN ===== */
+    .bus-console {
+      height: 56px;
+      background: linear-gradient(180deg, #4a1320, #1a050a);
+      border: 1px solid #c9a956;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 4px 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .bus-console-label {
+      font-family: var(--display-font);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: #ffe4a0;
+      animation: busScreenPulse 2.4s ease-in-out infinite;
+    }
+    .bus-console-screen {
+      font-family: var(--sans-font);
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      color: rgba(255, 228, 160, 0.7);
+    }
+    @keyframes busScreenPulse {
+      0%, 100% { opacity: 0.6; text-shadow: none; }
+      50%      { opacity: 1; text-shadow: 0 0 8px rgba(255, 228, 160, 0.8); }
+    }
+
+    /* ============================================================================
+       PASSENGER CABIN
+       ============================================================================ */
+    .bus-cabin {
+      position: relative;
+      padding: 4px 0;
+    }
+
+    .bus-grid {
+      display: grid;
+      grid-template-columns: 32px 32px 14px 32px 32px;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .bus-aisle { display: block; }
+
+    .bus-rear-row {
+      display: grid;
+      grid-template-columns: repeat(6, 32px);
+      gap: 5px;
+      justify-content: center;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(232, 196, 104, 0.25);
+    }
+
+    /* ============================================================================
+       BUS SEAT — burgundy velvet with gold "yours"
+       ============================================================================ */
+    .bus-seat {
+      position: relative;
+      aspect-ratio: 1 / 1.2;
+      min-height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--display-font);
+      font-size: 9px;
+      font-weight: 600;
+      border-radius: 7px 7px 4px 4px;
+      overflow: hidden;
+      user-select: none;
+      z-index: 1;
+    }
+    .bus-seat::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: 3px;
+      right: 3px;
+      height: 5px;
+      border-radius: 4px 4px 0 0;
+      z-index: 2;
+    }
+    .bus-seat::after {
+      content: '';
+      position: absolute;
+      inset: 4px 5px 6px 5px;
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* FREE */
+    .bus-seat.free {
+      color: rgba(255, 220, 220, 0.75);
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+      border: 1px solid #8a3344;
+      background:
+        radial-gradient(ellipse at 30% 30%, rgba(255, 180, 180, 0.18), transparent 50%),
+        radial-gradient(ellipse at 70% 70%, rgba(0, 0, 0, 0.4), transparent 45%),
+        linear-gradient(165deg, #6b1e2e, #4a1320 50%, #2a0a12);
+      animation: busSeatBreathe 3.6s ease-in-out infinite;
+    }
+    .bus-seat.free::before {
+      background: linear-gradient(180deg, #6b1e2e, #2a0a12);
+      border: 1px solid #8a3344;
+      border-bottom: none;
+    }
+    .bus-seat.free::after {
+      background:
+        repeating-linear-gradient(45deg, transparent 0 6px, rgba(0, 0, 0, 0.12) 6px 7px),
+        repeating-linear-gradient(-45deg, transparent 0 6px, rgba(0, 0, 0, 0.12) 6px 7px),
+        linear-gradient(115deg, transparent 38%, rgba(232, 196, 104, 0.4) 50%, transparent 62%);
+      background-size: auto, auto, 280% 100%;
+      background-position: 0 0, 0 0, -100% 0;
+      animation: busSeatShimmer 5.5s ease-in-out infinite;
+    }
+    @keyframes busSeatBreathe {
+      0%, 100% { box-shadow: inset 0 1px 0 rgba(232, 196, 104, 0.15), inset 0 -2px 4px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.5); }
+      50%      { box-shadow: inset 0 1px 0 rgba(232, 196, 104, 0.3),  inset 0 -2px 4px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(232, 196, 104, 0.3); }
+    }
+    @keyframes busSeatShimmer {
+      0%, 65%, 100% { background-position: 0 0, 0 0, -100% 0; }
+      35%           { background-position: 0 0, 0 0,  200% 0; }
+    }
+
+    /* Change mode — free seats clickable */
+    .bus-grid[data-change-mode="1"] .bus-seat.free {
+      cursor: pointer;
+    }
+    .bus-grid[data-change-mode="1"] .bus-seat.free:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px var(--gold), 0 2px 12px rgba(232, 196, 104, 0.5);
+      transform: scale(1.08);
+      z-index: 2;
+    }
+
+    .bus-grid > .bus-seat:nth-child(5n+1) { animation-delay: 0s, 0s; }
+    .bus-grid > .bus-seat:nth-child(5n+2) { animation-delay: 0.4s, 0.4s; }
+    .bus-grid > .bus-seat:nth-child(5n+4) { animation-delay: 0.8s, 0.8s; }
+    .bus-grid > .bus-seat:nth-child(5n+5) { animation-delay: 1.2s, 1.2s; }
+
+    /* TAKEN */
+    .bus-seat.taken {
+      background: linear-gradient(165deg, #2a0d14, #15050a);
+      border: 1px solid #3a1320;
+      color: rgba(255, 200, 200, 0.16);
+      opacity: 0.78;
+      box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.7);
+    }
+    .bus-seat.taken::before {
+      background: linear-gradient(180deg, #2a0d14, #15050a);
+      border: 1px solid #3a1320;
+      border-bottom: none;
+    }
+    .bus-seat.taken::after {
+      background:
+        repeating-linear-gradient(45deg, transparent 0 6px, rgba(0, 0, 0, 0.18) 6px 7px),
+        repeating-linear-gradient(-45deg, transparent 0 6px, rgba(0, 0, 0, 0.18) 6px 7px);
+      opacity: 0.5;
+    }
+
+    /* YOURS — golden VIP with strong halo, distinct from selected */
+    .bus-seat.yours {
+      background: linear-gradient(165deg, #ffe4a0, #c9a956 60%, #8b6f2e);
+      border: 2px solid #ffe4a0;
+      color: #2a0a12;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px) scale(1.08);
+      z-index: 5;
+      animation: busSeatYours 1.8s ease-in-out infinite;
+    }
+    .bus-seat.yours::before {
+      background: linear-gradient(180deg, #ffe4a0, #c9a956);
+      border: 2px solid #ffe4a0;
+      border-bottom: none;
+    }
+    .bus-seat.yours::after {
+      background:
+        repeating-linear-gradient(45deg, transparent 0 6px, rgba(255, 255, 255, 0.12) 6px 7px),
+        repeating-linear-gradient(-45deg, transparent 0 6px, rgba(255, 255, 255, 0.12) 6px 7px),
+        linear-gradient(115deg, transparent 25%, rgba(255, 255, 255, 0.7) 50%, transparent 75%);
+      background-size: auto, auto, 280% 100%;
+      animation: busSeatYoursShine 2s linear infinite;
+    }
+    @keyframes busSeatYours {
+      0%, 100% {
+        transform: translateY(-2px) scale(1.08);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.6),
+          0 4px 18px rgba(232, 196, 104, 0.8),
+          0 0 0 3px rgba(232, 196, 104, 0.5),
+          0 0 35px rgba(232, 196, 104, 0.7);
+      }
+      50% {
+        transform: translateY(-4px) scale(1.16);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.85),
+          0 8px 32px rgba(255, 228, 160, 1),
+          0 0 0 4px rgba(232, 196, 104, 0.65),
+          0 0 70px rgba(255, 228, 160, 1);
+      }
+    }
+    @keyframes busSeatYoursShine {
+      0%   { background-position: 0 0, 0 0, -100% 0; }
+      100% { background-position: 0 0, 0 0,  200% 0; }
+    }
+
+    /* ============================================================================
+       RESPONSIVE
+       ============================================================================ */
+    @media (max-width: 380px) {
+      .bus-modal-content { padding: 16px 12px 20px; }
+      .bus-interior { padding: 80px 10px 20px; }
+      .bus-shell { width: 250px; padding: 12px 14px; }
+      .bus-grid { grid-template-columns: 28px 28px 12px 28px 28px; gap: 5px; }
+      .bus-rear-row { grid-template-columns: repeat(6, 28px); gap: 4px; }
+      .bus-seat { min-height: 22px; font-size: 7.5px; }
+      .bus-headlight-l { left: 36px; }
+      .bus-headlight-r { right: 36px; }
+      .bus-stat-value { font-size: 17px; }
+    }
+
+
+    /* === COPIED TOAST === */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--bg-card);
+      border: 1px solid var(--gold);
+      color: var(--cream);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Tiny phones */
+    @media (max-width: 380px) {
+      .ticket-page-title { font-size: 26px; }
+      .qr-wrap { width: 140px; height: 140px; padding: 8px; }
+      .ticket-name { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Header -->
+    <div class="ticket-header">
+      <div class="farmasi-logo">
+        <img
+          src="farmasi.png"
+          alt="FARMASI"
+          class="farmasi-logo-img"
+          onerror="this.setAttribute('data-failed','true')"
+        />
+        <div class="farmasi-logo-fallback">
+          <span>FARMASI</span>
+        </div>
+      </div>
+      <div class="event-badge">✦ FARMASI Georgia · 20 Years ✦</div>
+      <h1 class="ticket-page-title">შენი <span class="accent">ბილეთი</span></h1>
+      <div class="ticket-page-subtitle">YOUR PERSONAL TICKET</div>
+    </div>
+
+    <!-- Loading state -->
+    <div class="loading-state" id="loadingState">
+      <div class="loading-spinner"></div>
+      <p>იტვირთება...</p>
+    </div>
+
+    <!-- Error state -->
+    <div class="error-state" id="errorState">
+      <div class="error-icon">🎫</div>
+      <div class="error-title">ბილეთი ვერ მოიძებნა</div>
+      <p id="errorMsg">შესაძლოა ლინკი არასწორია ან ბილეთი გაუქმდა.</p>
+      <a href="index.html" class="error-back">მთავარი გვერდი →</a>
+    </div>
+
+    <!-- Ticket content (initially hidden) -->
+    <div class="ticket-content" id="ticketContent">
+
+      <!-- Main ticket card -->
+      <div class="ticket-card">
+        <div class="ticket-card-center">
+          <div class="tier-pill" id="tierPill"></div>
+          <div class="qr-wrap" id="qrWrap"></div>
+          <div class="ticket-id" id="ticketId">FM-2026-00000</div>
+          <div class="ticket-name" id="ticketName">Guest</div>
+          <div class="ticket-meta" id="ticketMeta"></div>
+          <button class="ticket-seat" id="ticketSeat" type="button" style="display:none;">
+            <span class="ticket-seat-icon">🪑</span>
+            <span class="ticket-seat-label">ავტობუსში ადგილი</span>
+            <span class="ticket-seat-num" id="ticketSeatNum">#1</span>
+          </button>
+        </div>
+
+        <!-- Transport info -->
+        <div class="ticket-transport" id="ticketTransport" style="display:none;">
+          <div class="ticket-transport-header">
+            <span class="ticket-transport-icon">🚌</span>
+            <span class="ticket-transport-title" id="ticketTransportTitle">ტრანსპორტი თბილისიდან</span>
+          </div>
+          <div class="ticket-transport-row" id="trTimeRow" style="display:none;">
+            <span class="ttr-label">გასვლის დრო</span>
+            <span class="ttr-value" id="trTime"></span>
+          </div>
+          <div class="ticket-transport-row" id="trAddrRow" style="display:none;">
+            <span class="ttr-label">გასვლის ადგილი</span>
+            <span class="ttr-value" id="trAddr"></span>
+          </div>
+          <a class="ticket-transport-map" id="trMap" href="#" target="_blank" rel="noopener" style="display:none;">
+            📍 რუკაზე ნახვა →
+          </a>
+        </div>
+      </div>
+
+      <!-- Calendar -->
+      <div class="section-label">— დაამატე კალენდარში —</div>
+      <div class="action-grid">
+        <a class="action-btn" id="googleCalBtn" href="#" target="_blank" rel="noopener">
+          <span class="ico">📅</span> Google Calendar
+        </a>
+        <a class="action-btn" id="appleCalBtn" href="#" download="event.ics">
+          <span class="ico">🍎</span> Apple / .ics
+        </a>
+      </div>
+
+      <!-- Share -->
+      <div class="section-label">— გაუგზავნე მეგობარს —</div>
+      <div class="share-row">
+        <a class="share-btn" id="shareWhatsapp" href="#" target="_blank" rel="noopener" title="WhatsApp">📱</a>
+        <a class="share-btn" id="shareTelegram" href="#" target="_blank" rel="noopener" title="Telegram">✈️</a>
+        <a class="share-btn" id="shareFacebook" href="#" target="_blank" rel="noopener" title="Facebook">📘</a>
+        <button class="share-btn" id="shareCopy" type="button" title="Copy link">🔗</button>
+      </div>
+
+      <!-- Transport change section -->
+      <div class="transport-change-section" id="transportChangeSection">
+        <button class="transport-change-toggle" id="transportChangeToggle" type="button">
+          <span class="transport-change-icon">🚌</span>
+          <span>ტრანსპორტის შეცვლა</span>
+        </button>
+        <div class="transport-change-area" id="transportChangeArea">
+
+          <!-- Step 1: phone -->
+          <div class="tc-step" id="tcStep1">
+            <p class="tc-hint">შეიყვანე რეგისტრაციის ტელეფონის ნომერი — გამოგიგზავნით SMS კოდს</p>
+            <div class="tc-input-row">
+              <input class="tc-input" id="tcPhone" type="tel" placeholder="5xxxxxxxx" maxlength="13" inputmode="tel" />
+              <button class="tc-btn-send" id="tcSendOtp" type="button">კოდის გაგზავნა</button>
+            </div>
+            <div class="tc-msg" id="tcMsg1"></div>
+          </div>
+
+          <!-- Step 2: OTP -->
+          <div class="tc-step hide" id="tcStep2">
+            <p class="tc-hint">შეიყვანე SMS-ით მიღებული 4-ნიშნა კოდი</p>
+            <div class="tc-input-row">
+              <input class="tc-input tc-input-otp" id="tcOtp" type="tel" placeholder="0000" maxlength="4" inputmode="numeric" />
+              <button class="tc-btn-send" id="tcVerifyOtp" type="button">შემოწმება</button>
+            </div>
+            <button class="tc-resend" id="tcResend" type="button">კოდი არ მივიღე — ხელახლა გაგზავნა</button>
+            <div class="tc-msg" id="tcMsg2"></div>
+          </div>
+
+          <!-- Step 3: choose transport -->
+          <div class="tc-step hide" id="tcStep3">
+            <p class="tc-hint">აირჩიე ტრანსპორტი</p>
+            <div class="tc-transport-btns">
+              <button class="tc-transport-opt" id="tcOptBus" type="button" data-mode="bus">
+                <span class="tc-opt-icon">🚌</span>
+                <span class="tc-opt-label">ავტობუსი</span>
+                <span class="tc-opt-sub">ადგილის არჩევა</span>
+              </button>
+              <button class="tc-transport-opt" id="tcOptCar" type="button" data-mode="car">
+                <span class="tc-opt-icon">🚗</span>
+                <span class="tc-opt-label">საკუთარი ავტომობილი</span>
+                <span class="tc-opt-sub">ავტობუსი არ სჭირდება</span>
+              </button>
+            </div>
+            <div class="tc-msg" id="tcMsg3"></div>
+          </div>
+
+          <!-- Step 4: success -->
+          <div class="tc-step hide" id="tcStep4">
+            <div class="tc-success">
+              <div class="tc-success-icon">✓</div>
+              <div class="tc-success-text" id="tcSuccessText">ტრანსპორტი განახლდა!</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Cancel section -->
+      <div class="cancel-section">
+        <button class="cancel-toggle" id="cancelToggle" type="button">
+          <span class="cancel-icon">✕</span>
+          <span>ვერ ვახერხებ ჩამოსვლას · რეგისტრაციის გაუქმება</span>
+        </button>
+        <div class="cancel-area" id="cancelArea">
+          <p class="cancel-warning">
+            ⚠️ რეგისტრაციის გაუქმება <strong>შეუქცევადია</strong> — ბილეთი გაუქმდება, ადგილი გათავისუფლდება.
+          </p>
+          <button class="btn-cancel-confirm" id="cancelConfirm" type="button">
+            ✕ დადასტურება — გავაუქმოთ ბილეთი
+          </button>
+          <button class="btn-cancel-back" id="cancelBack" type="button">
+            უკან დავბრუნდე
+          </button>
+          <div class="cancel-msg" id="cancelMsg"></div>
+        </div>
+      </div>
+
+      <!-- Back to home -->
+      <a href="index.html" class="back-link">← მთავარ გვერდზე დაბრუნება</a>
+
+    </div>
+
+  </div>
+
+  <!-- Copied toast -->
+  <div class="toast" id="toast">დაკოპირდა ✓</div>
+
+  <!-- BUS SEAT MAP MODAL -->
+  <div class="bus-modal" id="busModal">
+    <div class="bus-modal-content">
+      <button class="bus-modal-close" id="busModalClose" type="button" aria-label="Close">×</button>
+
+      <div class="bus-modal-subtitle">YOUR SEAT</div>
+      <div class="bus-modal-title">ავტობუსის <span class="accent">სქემა</span></div>
+
+      <!-- Stats -->
+      <div class="bus-stats">
+        <div class="bus-stat">
+          <div class="bus-stat-value your" id="busYourSeat">#--</div>
+          <div class="bus-stat-label">შენი ადგილი</div>
+        </div>
+        <div class="bus-stat">
+          <div class="bus-stat-value taken" id="busTakenCount">0</div>
+          <div class="bus-stat-label">დაკავებული</div>
+        </div>
+        <div class="bus-stat">
+          <div class="bus-stat-value free" id="busFreeCount">54</div>
+          <div class="bus-stat-label">თავისუფალი</div>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="bus-legend">
+        <div class="bus-legend-item">
+          <div class="bus-legend-dot bus-legend-free"></div>
+          <span>თავისუფალი</span>
+        </div>
+        <div class="bus-legend-item">
+          <div class="bus-legend-dot bus-legend-taken"></div>
+          <span>დაკავებული</span>
+        </div>
+        <div class="bus-legend-item">
+          <div class="bus-legend-dot bus-legend-yours"></div>
+          <span>შენი ადგილი</span>
+        </div>
+      </div>
+
+      <!-- Bus interior — luxury Maybach-style salon -->
+      <!-- Bus interior — Opera Burgundy luxury salon -->
+      <div class="bus-interior">
+
+        <!-- Side LED ambient strips -->
+        <div class="bus-led-strip bus-led-l"></div>
+        <div class="bus-led-strip bus-led-r"></div>
+
+        <!-- Bus shell with rounded gold-trimmed front -->
+        <div class="bus-shell">
+
+          <!-- Headlight beams (project upward into the night) -->
+          <div class="bus-beam bus-beam-l"></div>
+          <div class="bus-beam bus-beam-r"></div>
+
+          <!-- Headlight bulbs (on bus front grille) -->
+          <div class="bus-headlight bus-headlight-l"></div>
+          <div class="bus-headlight bus-headlight-r"></div>
+
+          <!-- Driver cockpit with windshield + dashboard -->
+          <div class="bus-driver-cabin">
+            <div class="bus-windshield"></div>
+
+            <div class="bus-dashboard">
+              <!-- LEFT: steering wheel + driver chair -->
+              <div class="bus-driver-area">
+                <svg class="bus-steering" viewBox="0 0 50 50">
+                  <circle cx="25" cy="25" r="22.5" class="rim-glow" stroke-width="1.5"/>
+                  <circle cx="25" cy="25" r="20" class="rim" stroke-width="5.5"/>
+                  <circle cx="25" cy="25" r="17.2" class="rim-inner" stroke-width="0.6"/>
+                  <line x1="25" y1="25" x2="9" y2="25" class="spoke" stroke-width="3.5"/>
+                  <line x1="25" y1="25" x2="41" y2="25" class="spoke" stroke-width="3.5"/>
+                  <line x1="25" y1="25" x2="25" y2="41" class="spoke" stroke-width="3.5"/>
+                  <circle cx="25" cy="25" r="6.8" class="hub" stroke-width="0.6"/>
+                  <text x="25" y="28.5" text-anchor="middle" font-size="8" font-weight="700" class="logo">F</text>
+                </svg>
+                <div class="bus-driver-seat"></div>
+              </div>
+
+              <!-- RIGHT: FARMASI dashboard screen -->
+              <div class="bus-console">
+                <div class="bus-console-label">FARMASI</div>
+                <div class="bus-console-screen">12:00 ✦ TBS</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Passenger cabin (54 seats inserted by buildBusGrid()) -->
+          <div class="bus-cabin">
+            <div class="bus-grid" id="busGrid"></div>
+          </div>
+
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    const API_URL = "https://script.google.com/macros/s/AKfycbxD5ArKdm0sg3pVzx5hjiRND-eRsvGwZ5eZwSZRI639NYhtzv1Qgj-dr8tcJqSkrOX4eA/exec";
+
+    // DOM references
+    const els = {
+      loadingState: document.getElementById("loadingState"),
+      errorState: document.getElementById("errorState"),
+      errorMsg: document.getElementById("errorMsg"),
+      ticketContent: document.getElementById("ticketContent"),
+
+      tierPill: document.getElementById("tierPill"),
+      qrWrap: document.getElementById("qrWrap"),
+      ticketId: document.getElementById("ticketId"),
+      ticketName: document.getElementById("ticketName"),
+      ticketMeta: document.getElementById("ticketMeta"),
+      ticketSeat: document.getElementById("ticketSeat"),
+      ticketSeatNum: document.getElementById("ticketSeatNum"),
+
+      ticketTransport: document.getElementById("ticketTransport"),
+      ticketTransportTitle: document.getElementById("ticketTransportTitle"),
+      trTimeRow: document.getElementById("trTimeRow"),
+      trTime: document.getElementById("trTime"),
+      trAddrRow: document.getElementById("trAddrRow"),
+      trAddr: document.getElementById("trAddr"),
+      trMap: document.getElementById("trMap"),
+
+      googleCalBtn: document.getElementById("googleCalBtn"),
+      appleCalBtn: document.getElementById("appleCalBtn"),
+      shareWhatsapp: document.getElementById("shareWhatsapp"),
+      shareTelegram: document.getElementById("shareTelegram"),
+      shareFacebook: document.getElementById("shareFacebook"),
+      shareCopy: document.getElementById("shareCopy"),
+
+      cancelToggle: document.getElementById("cancelToggle"),
+      cancelArea: document.getElementById("cancelArea"),
+      cancelConfirm: document.getElementById("cancelConfirm"),
+      cancelBack: document.getElementById("cancelBack"),
+      cancelMsg: document.getElementById("cancelMsg"),
+
+      // Bus modal
+      busModal: document.getElementById("busModal"),
+      busModalClose: document.getElementById("busModalClose"),
+      busGrid: document.getElementById("busGrid"),
+      busYourSeat: document.getElementById("busYourSeat"),
+      busTakenCount: document.getElementById("busTakenCount"),
+      busFreeCount: document.getElementById("busFreeCount"),
+
+      toast: document.getElementById("toast")
+    };
+
+    let currentTicket = null;
+    let currentConfig = {};
+
+    function safeText(v) {
+      return String(v == null ? "" : v).trim();
+    }
+
+    function isUrl(s) {
+      return /^https?:\/\//i.test(String(s || ""));
+    }
+
+    function jsonpAction(fields, timeoutMs = 20000) {
+      return new Promise((resolve, reject) => {
+        const callbackName = "farmasiTicketCb_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+        const params = new URLSearchParams();
+        Object.keys(fields || {}).forEach((key) => {
+          if (fields[key] !== undefined && fields[key] !== null) params.append(key, fields[key]);
+        });
+        params.append("callback", callbackName);
+
+        const script = document.createElement("script");
+        const cleanup = () => {
+          delete window[callbackName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        };
+        const timer = setTimeout(() => {
+          cleanup();
+          reject(new Error("Request timed out"));
+        }, timeoutMs);
+
+        window[callbackName] = (data) => {
+          clearTimeout(timer);
+          cleanup();
+          resolve(data);
+        };
+
+        script.onerror = () => {
+          clearTimeout(timer);
+          cleanup();
+          reject(new Error("Network error"));
+        };
+        script.src = API_URL + "?" + params.toString();
+        document.body.appendChild(script);
+      });
+    }
+
+    function spawnParticles(count) {
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        p.style.left = Math.random() * 100 + "vw";
+        p.style.animationDelay = (Math.random() * 22) + "s";
+        p.style.animationDuration = (16 + Math.random() * 10) + "s";
+        document.body.appendChild(p);
+      }
+    }
+
+    async function loadTicket() {
+      const params = new URLSearchParams(window.location.search);
+      const ticketId = params.get("t");
+
+      if (!ticketId) {
+        showError("ბილეთის ID არ არის მოცემული. გთხოვთ, გამოიყენოთ SMS-ში მოცემული ლინკი.");
+        return;
+      }
+
+      try {
+        const data = await jsonpAction({ action: "getTicket", id: ticketId });
+
+        if (!data.ok || !data.ticket) {
+          showError(data.error === "Ticket not found"
+            ? "ეს ბილეთი ვერ მოიძებნა — შესაძლოა გაუქმებულია."
+            : "ბილეთის ჩატვირთვა ვერ მოხერხდა.");
+          return;
+        }
+
+        currentTicket = data.ticket;
+        currentConfig = data.config || {};
+
+        renderTicket(currentTicket, currentConfig);
+
+      } catch (err) {
+        console.error(err);
+        showError("ქსელის შეცდომა — გთხოვთ, სცადოთ კიდევ ერთხელ.");
+      }
+    }
+
+    function showError(message) {
+      els.loadingState.classList.add("hide");
+      els.errorState.classList.add("show");
+      if (message) els.errorMsg.textContent = message;
+    }
+
+    function renderTicket(ticket, config) {
+      // Hide loading
+      els.loadingState.classList.add("hide");
+
+      // Tier pill
+      const tier = ticket.tier || "Standard";
+      let tierCls = "tier-standard", tierIcon = "🎫";
+      if (tier === "Early Bird") { tierCls = "tier-early"; tierIcon = "🥇"; }
+      else if (tier === "VIP") { tierCls = "tier-vip"; tierIcon = "✨"; }
+      els.tierPill.className = "tier-pill " + tierCls;
+      els.tierPill.textContent = tierIcon + " " + tier;
+
+      // QR code
+      // Build QR text — always include ticket ID as primary identifier.
+      // Add name + phone only if they're present.
+      const fn = String(ticket.first_name || "").trim();
+      const ln = String(ticket.last_name || "").trim();
+      const ph = String(ticket.phone || "").trim();
+      const fullName = (fn + " " + ln).trim();
+
+      let qrText = ticket.ticket_id;
+
+      els.qrWrap.innerHTML = "";
+      try {
+        if (typeof QRCode !== "undefined") {
+          new QRCode(els.qrWrap, {
+            text: qrText,
+            width: 140,
+            height: 140,
+            colorDark: "#1a1212",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        } else {
+          // QRCode library failed to load — show ticket ID as plain text fallback
+          els.qrWrap.innerHTML = '<img src="https://quickchart.io/qr?size=160&text=' + encodeURIComponent(qrText) + '" width="160" height="160" />';
+        }
+      } catch (e) {
+        els.qrWrap.innerHTML = '<img src="https://quickchart.io/qr?size=160&text=' + encodeURIComponent(qrText) + '" width="160" height="160" />';
+      }
+
+      // ID + name + meta
+      els.ticketId.textContent = ticket.ticket_id;
+      els.ticketName.textContent = ((ticket.first_name || "") + " " + (ticket.last_name || "")).trim() || "Guest";
+
+      const city = safeText(config.event_city);
+      const date = safeText(config.event_date);
+      const time = safeText(config.event_time);
+      els.ticketMeta.textContent = [city, date, time].filter(Boolean).join(" · ");
+
+      // Seat
+      if (ticket.seat_number) {
+        const multiBus = Number(config.bus_count || 1) > 1;
+        const busNo = Number(ticket.bus_number || 1) || 1;
+        els.ticketSeatNum.textContent = (multiBus ? "ავტ. " + busNo + " · " : "") + "#" + ticket.seat_number;
+        els.ticketSeat.style.display = "inline-flex";
+      }
+
+      // Transport info
+      const trAddress = safeText(config.transport_address);
+      const trMapUrl = safeText(config.transport_map);
+      const trTime = safeText(config.transport_time);
+      const trType = safeText(config.transport_type);
+      const hasTransport = trAddress || trMapUrl || trTime || trType;
+
+      if (hasTransport) {
+        els.ticketTransport.style.display = "block";
+        els.ticketTransportTitle.textContent = trType || "ტრანსპორტი თბილისიდან";
+
+        if (trTime) {
+          els.trTime.textContent = trTime;
+          els.trTimeRow.style.display = "flex";
+        }
+        if (trAddress) {
+          els.trAddr.textContent = trAddress;
+          els.trAddrRow.style.display = "flex";
+        }
+        if (isUrl(trMapUrl)) {
+          els.trMap.href = trMapUrl;
+          els.trMap.style.display = "block";
+        }
+      }
+
+      // Calendar links
+      buildCalendarLinks(config);
+
+      // Share links
+      buildShareLinks(ticket);
+
+      // Show ticket
+      els.ticketContent.classList.add("show");
+    }
+
+    function buildCalendarLinks(config) {
+      const title = config.event_name || "FARMASI Georgia — 20 წელი";
+      const details = config.farewell || "FARMASI Georgia-ს საიუბილეო ღონისძიება";
+      const location = config.event_location || "";
+      const date = config.event_date || "";
+      const time = config.event_time || "14:00";
+
+      // Build start/end timestamps (default 3-hour event)
+      let startTs = "", endTs = "";
+      if (date) {
+        const dt = date.replace(/-/g, "");
+        const [hh, mm] = time.split(":");
+        const h = parseInt(hh) || 14;
+        const m = parseInt(mm) || 0;
+        const start = String(h).padStart(2, "0") + String(m).padStart(2, "0") + "00";
+        const endH = (h + 3) % 24;
+        const end = String(endH).padStart(2, "0") + String(m).padStart(2, "0") + "00";
+        startTs = dt + "T" + start;
+        endTs = dt + "T" + end;
+      }
+
+      // Google Calendar URL
+      els.googleCalBtn.href =
+        "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+        "&text=" + encodeURIComponent(title) +
+        "&details=" + encodeURIComponent(details) +
+        "&location=" + encodeURIComponent(location) +
+        (startTs && endTs ? "&dates=" + startTs + "/" + endTs : "");
+
+      // Apple .ics
+      const icsContent = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        "SUMMARY:" + title,
+        "DESCRIPTION:" + details.replace(/\n/g, "\\n"),
+        "LOCATION:" + location,
+        startTs ? "DTSTART:" + startTs + "00" : "",
+        endTs ? "DTEND:" + endTs + "00" : "",
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ].filter(Boolean).join("\r\n");
+
+      els.appleCalBtn.href = "data:text/calendar;charset=utf-8," + encodeURIComponent(icsContent);
+    }
+
+    function buildShareLinks(ticket) {
+      const url = window.location.href;
+      const text = "🎫 ჩემი ბილეთი — FARMASI Georgia 20 წელი · " + ticket.ticket_id;
+      const fullText = text + " " + url;
+
+      els.shareWhatsapp.href = "https://wa.me/?text=" + encodeURIComponent(fullText);
+      els.shareTelegram.href = "https://t.me/share/url?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(text);
+      els.shareFacebook.href = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
+
+      els.shareCopy.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(url);
+          showToast("ლინკი დაკოპირდა ✓");
+        } catch {
+          showToast("კოპირება ვერ მოხდა");
+        }
+      });
+    }
+
+    function showToast(text) {
+      els.toast.textContent = text;
+      els.toast.classList.add("show");
+      setTimeout(() => els.toast.classList.remove("show"), 2400);
+    }
+
+    // === TRANSPORT CHANGE LOGIC ===
+    let tcVerifiedPhone = null;
+    let tcVerifiedTicket = null;
+
+    function setupTransportChangeHandlers() {
+      const toggle = document.getElementById('transportChangeToggle');
+      const area = document.getElementById('transportChangeArea');
+
+      toggle.addEventListener('click', () => {
+        const isOpen = area.classList.contains('show');
+        if (isOpen) {
+          area.classList.remove('show');
+        } else {
+          area.classList.add('show');
+          // Pre-fill phone if we know it
+          if (currentTicket && currentTicket.phone) {
+            const phoneInput = document.getElementById('tcPhone');
+            if (!phoneInput.value) phoneInput.value = currentTicket.phone;
+          }
+        }
+      });
+
+      // Step 1: send OTP
+      document.getElementById('tcSendOtp').addEventListener('click', handleTcSendOtp);
+      document.getElementById('tcPhone').addEventListener('keydown', e => {
+        if (e.key === 'Enter') handleTcSendOtp();
+      });
+
+      // Step 2: verify OTP
+      document.getElementById('tcVerifyOtp').addEventListener('click', handleTcVerifyOtp);
+      document.getElementById('tcOtp').addEventListener('keydown', e => {
+        if (e.key === 'Enter') handleTcVerifyOtp();
+      });
+      document.getElementById('tcResend').addEventListener('click', () => {
+        tcShowStep(1);
+        setTcMsg(1, '', '');
+      });
+
+      // Step 3: choose transport
+      document.getElementById('tcOptBus').addEventListener('click', () => handleTcChooseTransport('bus'));
+      document.getElementById('tcOptCar').addEventListener('click', () => handleTcChooseTransport('car'));
+
+      // ავტობუსის ადგილზე დაჭერა — change mode-ში (მუდმივი listener)
+      els.busGrid.addEventListener('click', handleBusSeatChangeClick);
+    }
+
+    function tcShowStep(n) {
+      [1, 2, 3, 4].forEach(i => {
+        const el = document.getElementById('tcStep' + i);
+        if (el) el.classList.toggle('hide', i !== n);
+      });
+    }
+
+    function setTcMsg(step, type, text) {
+      const el = document.getElementById('tcMsg' + step);
+      if (!el) return;
+      el.className = 'tc-msg' + (type ? ' ' + type : '');
+      el.textContent = text;
+    }
+
+    async function handleTcSendOtp() {
+      const rawPhone = document.getElementById('tcPhone').value.trim();
+      const phone = rawPhone.replace(/\D/g, '').replace(/^995/, '').slice(-9);
+      if (!/^5\d{8}$/.test(phone)) {
+        setTcMsg(1, 'err', 'შეიყვანე სწორი ნომერი (5xxxxxxxx)');
+        return;
+      }
+
+      const btn = document.getElementById('tcSendOtp');
+      btn.disabled = true;
+      btn.textContent = 'იგზავნება...';
+      setTcMsg(1, '', '');
+
+      try {
+        const data = await jsonpAction({ action: 'send_otp', phone: phone });
+        if (data && data.ok) {
+          tcVerifiedPhone = phone;
+          setTcMsg(1, '', '');
+          tcShowStep(2);
+          setTimeout(() => document.getElementById('tcOtp').focus(), 100);
+        } else {
+          const err = data && data.error;
+          if (err === 'Phone not registered') {
+            setTcMsg(1, 'err', '⚠ ეს ნომერი რეგისტრირებული არ არის');
+          } else if (err === 'Too many requests. Try again in a few minutes.') {
+            setTcMsg(1, 'err', '⏳ ძალიან ბევრი მცდელობა — სცადეთ რამდენიმე წუთში');
+          } else {
+            setTcMsg(1, 'err', 'შეცდომა: ' + (err || 'სცადეთ ხელახლა'));
+          }
+          btn.disabled = false;
+          btn.textContent = 'კოდის გაგზავნა';
+        }
+      } catch (e) {
+        setTcMsg(1, 'err', 'ქსელის შეცდომა — სცადეთ ხელახლა');
+        btn.disabled = false;
+        btn.textContent = 'კოდის გაგზავნა';
+      }
+    }
+
+    async function handleTcVerifyOtp() {
+      const otp = document.getElementById('tcOtp').value.trim();
+      if (!/^\d{4}$/.test(otp)) {
+        setTcMsg(2, 'err', 'შეიყვანე 4-ნიშნა კოდი');
+        return;
+      }
+
+      const btn = document.getElementById('tcVerifyOtp');
+      btn.disabled = true;
+      btn.textContent = 'მოწმდება...';
+      setTcMsg(2, '', '');
+
+      try {
+        const data = await jsonpAction({ action: 'verify_otp', phone: tcVerifiedPhone, otp: otp });
+        if (data && data.ok) {
+          tcVerifiedTicket = data.ticket;
+          setTcMsg(2, '', '');
+          tcShowStep(3);
+          // Highlight current transport choice
+          const curMode = data.ticket && data.ticket.transport_mode || 'bus';
+          document.querySelectorAll('.tc-transport-opt').forEach(btn => {
+            btn.classList.toggle('selected', btn.dataset.mode === curMode);
+          });
+        } else {
+          const err = data && data.error;
+          if (err === 'Wrong or expired OTP') {
+            setTcMsg(2, 'err', '❌ კოდი არასწორია ან ვადა გასულია');
+          } else {
+            setTcMsg(2, 'err', 'შეცდომა: ' + (err || 'სცადეთ ხელახლა'));
+          }
+          btn.disabled = false;
+          btn.textContent = 'შემოწმება';
+        }
+      } catch (e) {
+        setTcMsg(2, 'err', 'ქსელის შეცდომა — სცადეთ ხელახლა');
+        btn.disabled = false;
+        btn.textContent = 'შემოწმება';
+      }
+    }
+
+    async function handleTcChooseTransport(mode) {
+      console.log('[transport] ღილაკი დაჭერილია, mode =', mode);
+      if (mode === 'bus') {
+        // Open bus modal in "change" mode — seat selection
+        console.log('[transport] ვხსნი ავტობუსის სალონს...');
+        openBusModalForChange();
+        return;
+      }
+
+      // Car — no seat needed, confirm immediately
+      setTcMsg(3, '', '');
+      document.querySelectorAll('.tc-transport-opt').forEach(b => {
+        b.classList.toggle('selected', b.dataset.mode === mode);
+        b.disabled = true;
+      });
+
+      try {
+        const data = await jsonpAction({
+          action: 'update_transport',
+          ticket_id: tcVerifiedTicket.ticket_id,
+          phone: tcVerifiedPhone,
+          transport_mode: 'car'
+        });
+
+        if (data && data.ok) {
+          tcShowStep(4);
+          document.getElementById('tcSuccessText').textContent = '✓ ტრანსპორტი განახლდა — საკუთარი ავტომობილი';
+          // Reload ticket data
+          setTimeout(() => window.location.reload(), 2500);
+        } else {
+          setTcMsg(3, 'err', 'შეცდომა: ' + (data && data.error || 'სცადეთ ხელახლა'));
+          document.querySelectorAll('.tc-transport-opt').forEach(b => b.disabled = false);
+        }
+      } catch (e) {
+        setTcMsg(3, 'err', 'ქსელის შეცდომა — სცადეთ ხელახლა');
+        document.querySelectorAll('.tc-transport-opt').forEach(b => b.disabled = false);
+      }
+    }
+
+    // Bus modal in "change seat" mode
+    let busChangeMode = false;
+
+    async function openBusModalForChange() {
+      console.log('[bus] openBusModalForChange გაეშვა');
+      console.log('[bus] els.busModal =', els.busModal);
+      console.log('[bus] els.busGrid =', els.busGrid);
+      busChangeMode = true;
+
+      // current seat-ის მონიშვნა "yours"-ად — ვადგენთ tcVerifiedTicket-იდან
+      const savedTicket = currentTicket;
+      if (tcVerifiedTicket) currentTicket = tcVerifiedTicket;
+
+      // modal-ის სათაურის შეცვლა
+      const subtitle = document.querySelector('.bus-modal-subtitle');
+      if (subtitle) subtitle.textContent = 'SEAT CHANGE';
+      const title = document.querySelector('.bus-modal-title');
+      if (title) title.innerHTML = 'ავირჩიე <span class="accent">ახალი ადგილი</span>';
+
+      // grid-ს ვაძლევთ ნიშანს რომ change mode-შია (CSS-ისთვის: free ადგილები clickable)
+      els.busGrid.dataset.changeMode = '1';
+
+      await openBusModal();
+
+      // close ღილაკი/ფონი — savedTicket-ის აღდგენით
+      els.busModalClose.onclick = () => closeBusModalChange(savedTicket);
+      els.busModal.onclick = (ev) => {
+        if (ev.target === els.busModal) closeBusModalChange(savedTicket);
+      };
+    }
+
+    function closeBusModalChange(savedTicket) {
+      busChangeMode = false;
+      currentTicket = savedTicket;
+      delete els.busGrid.dataset.changeMode;
+      closeBusModal();
+
+      // სათაურის აღდგენა
+      const subtitle = document.querySelector('.bus-modal-subtitle');
+      if (subtitle) subtitle.textContent = 'YOUR SEAT';
+      const title = document.querySelector('.bus-modal-title');
+      if (title) title.innerHTML = 'ავტობუსის <span class="accent">სქემა</span>';
+
+      // close ღილაკის ჩვეულებრივი ქცევის აღდგენა
+      els.busModalClose.onclick = closeBusModal;
+      els.busModal.onclick = (ev) => {
+        if (ev.target === els.busModal) closeBusModal();
+      };
+    }
+
+    async function handleBusSeatChangeClick(e) {
+      if (!busChangeMode) return;
+      const seatEl = e.target.closest('.bus-seat');
+      if (!seatEl) return;
+
+      const seatNum = parseInt(seatEl.dataset.seat);
+      if (seatEl.classList.contains('taken')) {
+        showToast('ადგილი დაკავებულია');
+        return;
+      }
+      if (seatEl.classList.contains('yours')) {
+        showToast('ეს შენი ამჟამინდელი ადგილია');
+        return;
+      }
+
+      // Confirm
+      seatEl.textContent = '✓';
+      seatEl.style.background = 'var(--gold)';
+      seatEl.style.color = '#1a0a10';
+
+      try {
+        const ownBusNo = Number((tcVerifiedTicket && tcVerifiedTicket.bus_number) || 1) || 1;
+        const data = await jsonpAction({
+          action: 'update_transport',
+          ticket_id: tcVerifiedTicket.ticket_id,
+          phone: tcVerifiedPhone,
+          transport_mode: 'bus',
+          bus_number: ownBusNo,
+          seat_number: seatNum
+        });
+
+        if (data && data.ok) {
+          delete els.busGrid.dataset.changeMode;
+          closeBusModal();
+          busChangeMode = false;
+          tcShowStep(4);
+          document.getElementById('transportChangeArea').classList.add('show');
+          document.getElementById('tcSuccessText').textContent = '✓ ადგილი შეიცვალა — ავტობუსი ' + ownBusNo + ', ადგილი #' + seatNum;
+          setTimeout(() => window.location.reload(), 2500);
+        } else {
+          seatEl.textContent = seatNum;
+          seatEl.style.background = '';
+          seatEl.style.color = '';
+          showToast(data && data.error === 'Seat taken' ? 'ადგილი ამ დროს დაიჭირეს!' : 'შეცდომა — სცადეთ ხელახლა');
+          // Refresh seat map
+          await fetchOccupiedSeats();
+          updateBusModalState();
+        }
+      } catch (e) {
+        seatEl.textContent = seatNum;
+        seatEl.style.background = '';
+        seatEl.style.color = '';
+        showToast('ქსელის შეცდომა — სცადეთ ხელახლა');
+      }
+    }
+
+    // === Cancel logic ===
+    function setupCancelHandlers() {
+      els.cancelToggle.addEventListener("click", () => {
+        const isOpen = els.cancelArea.classList.contains("show");
+        if (isOpen) {
+          els.cancelArea.classList.remove("show");
+          els.cancelToggle.classList.remove("active");
+        } else {
+          els.cancelArea.classList.add("show");
+          els.cancelToggle.classList.add("active");
+        }
+      });
+
+      els.cancelBack.addEventListener("click", () => {
+        els.cancelArea.classList.remove("show");
+        els.cancelToggle.classList.remove("active");
+      });
+
+      els.cancelConfirm.addEventListener("click", handleCancel);
+    }
+
+    async function handleCancel() {
+      if (!currentTicket || !currentTicket.ticket_id) {
+        showCancelMsg("error", "ბილეთის მონაცემები ვერ მოიძებნა ⚠");
+        return;
+      }
+
+      els.cancelConfirm.disabled = true;
+      els.cancelConfirm.textContent = "მიმდინარეობს...";
+      hideCancelMsg();
+
+      try {
+        const data = await jsonpAction({
+          action: "cancel",
+          ticket_id: currentTicket.ticket_id
+        });
+
+        if (data && data.ok === false) {
+          let errMsg = "გაუქმება ვერ შესრულდა";
+          if (data.error === "Not found") errMsg = "ბილეთი ვერ მოიძებნა";
+          showCancelMsg("error", errMsg + " ⚠");
+          els.cancelConfirm.disabled = false;
+          els.cancelConfirm.textContent = "✕ დადასტურება — გავაუქმოთ ბილეთი";
+          return;
+        }
+
+        // Success
+        showCancelMsg("success", "✓ რეგისტრაცია გაუქმდა — ადგილი გათავისუფლდა");
+
+        // Hide ticket card after 2.5 seconds, redirect to home
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2800);
+
+      } catch (err) {
+        console.error(err);
+        // Network errors during POST are common with Apps Script + CORS,
+        // but the action usually succeeds. Try to optimistically show success.
+        showCancelMsg("success", "✓ მოთხოვნა გაიგზავნა");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2800);
+      }
+    }
+
+    function showCancelMsg(type, text) {
+      els.cancelMsg.className = "cancel-msg show " + type;
+      els.cancelMsg.textContent = text;
+    }
+
+    function hideCancelMsg() {
+      els.cancelMsg.classList.remove("show");
+      els.cancelMsg.textContent = "";
+    }
+
+    // === BUS MODAL — full screen seat map ===
+    let occupiedSeatsCache = []; // last fetched list
+    let busModalBuilt = false;
+
+    async function openBusModal() {
+      els.busModal.classList.add("show");
+      document.body.style.overflow = "hidden";
+
+      // Build the grid once (54 seats)
+      if (!busModalBuilt) {
+        buildBusGrid();
+        busModalBuilt = true;
+      }
+
+      // Fetch fresh occupied seats data
+      await fetchOccupiedSeats();
+      updateBusModalState();
+    }
+
+    function closeBusModal() {
+      els.busModal.classList.remove("show");
+      document.body.style.overflow = "";
+    }
+
+    function buildBusGrid() {
+      const grid = els.busGrid;
+      grid.innerHTML = "";
+
+      let seatNum = 1;
+
+      // === REALISTIC BUS LAYOUT ===
+      // Real tourist coaches (Mercedes Tourismo, Setra, Neoplan):
+      // - 12 standard rows × 4 seats (2+2 with central aisle) = 48 seats
+      // - 1 rear row × 6 seats (back bench) = 6 seats
+      // - Total: 54 seats
+      // - Driver area & front door are visually represented in the cockpit above
+      //   (so the seating starts from row 1 normally)
+
+      for (let row = 0; row < 12; row++) {
+        // Left side: 2 seats (window + aisle)
+        grid.appendChild(createBusSeat(seatNum++));
+        grid.appendChild(createBusSeat(seatNum++));
+
+        // Central aisle
+        const aisle = document.createElement("div");
+        aisle.className = "bus-aisle";
+        grid.appendChild(aisle);
+
+        // Right side: 2 seats (aisle + window)
+        grid.appendChild(createBusSeat(seatNum++));
+        grid.appendChild(createBusSeat(seatNum++));
+      }
+
+      // Rear row — 6-seat back bench
+      const rear = document.createElement("div");
+      rear.className = "bus-rear-row";
+      for (let i = 0; i < 6; i++) {
+        rear.appendChild(createBusSeat(seatNum++));
+      }
+      grid.appendChild(rear);
+    }
+
+    function createBusSeat(num) {
+      const el = document.createElement("div");
+      el.className = "bus-seat free";
+      el.dataset.seat = num;
+      el.textContent = num;
+      return el;
+    }
+
+    async function fetchOccupiedSeats() {
+      try {
+        const data = await jsonpAction({ action: "status" });
+        if (data && data.ok) {
+          const busNo = Number(
+            (currentTicket && currentTicket.bus_number) ||
+            (typeof tcVerifiedTicket !== "undefined" && tcVerifiedTicket && tcVerifiedTicket.bus_number) || 1
+          ) || 1;
+          if (data.occupiedSeatsByBus && data.occupiedSeatsByBus[String(busNo)]) {
+            occupiedSeatsCache = data.occupiedSeatsByBus[String(busNo)];
+          } else if (Array.isArray(data.occupiedSeats)) {
+            occupiedSeatsCache = data.occupiedSeats;
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to fetch occupied seats:", e);
+      }
+    }
+
+    function updateBusModalState() {
+      const yourSeat = currentTicket && currentTicket.seat_number;
+      const totalSeats = 54;
+
+      // Update each seat's class
+      const seats = els.busGrid.querySelectorAll(".bus-seat");
+      let takenCount = 0;
+      seats.forEach(seat => {
+        const num = parseInt(seat.dataset.seat);
+        seat.classList.remove("free", "taken", "yours");
+
+        if (num === yourSeat) {
+          seat.classList.add("yours");
+          // Count "your" seat as taken in stats
+          takenCount++;
+        } else if (occupiedSeatsCache.includes(num)) {
+          seat.classList.add("taken");
+          takenCount++;
+        } else {
+          seat.classList.add("free");
+        }
+      });
+
+      // Update stats
+      els.busYourSeat.textContent = yourSeat ? "#" + yourSeat : "#--";
+      els.busTakenCount.textContent = takenCount;
+      els.busFreeCount.textContent = totalSeats - takenCount;
+    }
+
+    function setupBusModalHandlers() {
+      // Seat pill click — uses event delegation as a safeguard for desktop
+      // (works even if ticketSeat reference is initially hidden/recreated)
+      document.addEventListener("click", (e) => {
+        const seat = e.target.closest("#ticketSeat, .ticket-seat");
+        if (seat) {
+          e.preventDefault();
+          openBusModal();
+        }
+      });
+
+      // Also direct binding (works if element exists at this point)
+      if (els.ticketSeat) {
+        els.ticketSeat.addEventListener("click", (e) => {
+          e.preventDefault();
+          openBusModal();
+        });
+
+        // Make it keyboard accessible
+        els.ticketSeat.setAttribute("tabindex", "0");
+        els.ticketSeat.setAttribute("role", "button");
+        els.ticketSeat.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openBusModal();
+          }
+        });
+      }
+
+      els.busModalClose.addEventListener("click", closeBusModal);
+      els.busModal.addEventListener("click", (e) => {
+        if (e.target === els.busModal) closeBusModal();
+      });
+
+      // ESC key closes
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && els.busModal.classList.contains("show")) {
+          closeBusModal();
+        }
+      });
+    }
+
+    // === INIT ===
+    function init() {
+      spawnParticles(20);
+      setupCancelHandlers();
+      setupBusModalHandlers();
+      setupTransportChangeHandlers();
+      loadTicket();
+    }
+
+    init();
+  </script>
+
+</body>
+</html>
