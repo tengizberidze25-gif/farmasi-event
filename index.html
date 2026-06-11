@@ -10834,22 +10834,148 @@
         }, 450);
       }, 1100);
 
-      /* 🎆 უწყვეტი ფეიერვერკები — ყოველ ~8 წამში მცირე ზალპი შემთხვევითი ადგილიდან */
-      setInterval(function () {
-        if (document.hidden) return;
+      /* ════════════════════════════════════════════════════════════
+         🎆 პროფესიონალური ფეიერვერკის ძრავა
+         რაკეტა კვალით → სფერული აფეთქება → მოციმციმე ნაპერწკლები
+         ════════════════════════════════════════════════════════════ */
+      const fwCanvas = document.createElement("canvas");
+      fwCanvas.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9990;";
+      document.body.appendChild(fwCanvas);
+      const fctx = fwCanvas.getContext("2d");
+      let fwW = 0, fwH = 0;
+
+      function fwResize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+        fwW = window.innerWidth;
+        fwH = window.innerHeight;
+        fwCanvas.width = fwW * dpr;
+        fwCanvas.height = fwH * dpr;
+        fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      fwResize();
+      window.addEventListener("resize", fwResize);
+
+      const FW_COLORS = [
+        [240, 217, 140], [232, 196, 104], [255, 245, 214],
+        [212, 175, 55], [255, 214, 150]
+      ];
+      const rockets = [];
+      const sparks = [];
+      let fwRaf = null;
+
+      function launchRocket(count) {
+        for (let i = 0; i < (count || 1); i++) {
+          rockets.push({
+            x: fwW * (0.15 + Math.random() * 0.7),
+            y: fwH + 8,
+            vx: (Math.random() - 0.5) * 1.1,
+            vy: -(fwH * 0.011 + Math.random() * fwH * 0.004),
+            targetY: fwH * (0.16 + Math.random() * 0.30),
+            trail: [],
+            color: FW_COLORS[Math.floor(Math.random() * FW_COLORS.length)]
+          });
+        }
+        fwLoop();
+      }
+
+      function explode(x, y, color) {
         playFireworkSound();
-        confetti({
-          particleCount: 20 + Math.floor(Math.random() * 18),
-          angle: 55 + Math.random() * 70,
-          spread: 55 + Math.random() * 45,
-          startVelocity: 28 + Math.random() * 14,
-          origin: { x: 0.08 + Math.random() * 0.84, y: 0.45 + Math.random() * 0.35 },
-          colors: gold,
-          ticks: 170,
-          scalar: 0.75,
-          gravity: 0.9
-        });
-      }, 8000);
+        const n = 70 + Math.floor(Math.random() * 40);
+        for (let i = 0; i < n; i++) {
+          const ang = (Math.PI * 2 * i) / n + Math.random() * 0.12;
+          const spd = (0.9 + Math.random()) * (2.2 + Math.random() * 2.6);
+          sparks.push({
+            x: x, y: y,
+            vx: Math.cos(ang) * spd,
+            vy: Math.sin(ang) * spd,
+            life: 1,
+            decay: 0.008 + Math.random() * 0.012,
+            size: 1.4 + Math.random() * 1.4,
+            color: Math.random() < 0.25 ? [255, 245, 214] : color,
+            trail: []
+          });
+        }
+      }
+
+      function fwLoop() {
+        if (fwRaf) return;
+        const step = function () {
+          fctx.clearRect(0, 0, fwW, fwH);
+          fctx.globalCompositeOperation = "lighter";
+
+          /* რაკეტები */
+          for (let i = rockets.length - 1; i >= 0; i--) {
+            const r = rockets[i];
+            r.trail.push([r.x, r.y]);
+            if (r.trail.length > 9) r.trail.shift();
+            r.x += r.vx;
+            r.y += r.vy;
+            r.vy += 0.06;
+
+            for (let t = 0; t < r.trail.length; t++) {
+              const a = (t / r.trail.length) * 0.5;
+              fctx.fillStyle = "rgba(" + r.color[0] + "," + r.color[1] + "," + r.color[2] + "," + a + ")";
+              const w = 1 + t * 0.12;
+              fctx.fillRect(r.trail[t][0] - w / 2, r.trail[t][1], w, 2.4);
+            }
+            fctx.fillStyle = "rgba(255,250,230,0.95)";
+            fctx.beginPath();
+            fctx.arc(r.x, r.y, 2.1, 0, Math.PI * 2);
+            fctx.fill();
+
+            if (r.y <= r.targetY || r.vy >= -0.6) {
+              explode(r.x, r.y, r.color);
+              rockets.splice(i, 1);
+            }
+          }
+
+          /* ნაპერწკლები */
+          for (let i = sparks.length - 1; i >= 0; i--) {
+            const s = sparks[i];
+            s.trail.push([s.x, s.y]);
+            if (s.trail.length > 5) s.trail.shift();
+            s.x += s.vx;
+            s.y += s.vy;
+            s.vx *= 0.985;
+            s.vy = s.vy * 0.985 + 0.045;
+            s.life -= s.decay;
+            if (s.life <= 0) { sparks.splice(i, 1); continue; }
+
+            const flicker = s.life * (0.65 + Math.random() * 0.35);
+            if (s.trail.length > 1) {
+              fctx.strokeStyle = "rgba(" + s.color[0] + "," + s.color[1] + "," + s.color[2] + "," + (flicker * 0.35) + ")";
+              fctx.lineWidth = s.size * 0.8;
+              fctx.beginPath();
+              fctx.moveTo(s.trail[0][0], s.trail[0][1]);
+              for (let t = 1; t < s.trail.length; t++) fctx.lineTo(s.trail[t][0], s.trail[t][1]);
+              fctx.stroke();
+            }
+            fctx.fillStyle = "rgba(" + s.color[0] + "," + s.color[1] + "," + s.color[2] + "," + flicker + ")";
+            fctx.beginPath();
+            fctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+            fctx.fill();
+          }
+
+          fctx.globalCompositeOperation = "source-over";
+
+          if (rockets.length || sparks.length) {
+            fwRaf = requestAnimationFrame(step);
+          } else {
+            fwRaf = null;
+            fctx.clearRect(0, 0, fwW, fwH);
+          }
+        };
+        fwRaf = requestAnimationFrame(step);
+      }
+
+      /* გრაფიკი: გახსნიდან მალევე 2 რაკეტა, შემდეგ ყოველ 6-10 წამში 1-2 */
+      setTimeout(function () { if (!document.hidden) launchRocket(2); }, 1600);
+      (function fwSchedule() {
+        setTimeout(function () {
+          if (!document.hidden) launchRocket(Math.random() < 0.3 ? 2 : 1);
+          fwSchedule();
+        }, 6000 + Math.random() * 4000);
+      })();
     });
   </script>
 </body>
