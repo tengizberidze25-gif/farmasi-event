@@ -747,6 +747,14 @@
       opacity: 0.8;
       margin-left: 7px;
     }
+    .bus-switch-info {
+      width: 100%;
+      text-align: center;
+      font-size: 12.5px;
+      color: rgba(245, 233, 200, 0.85);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
 
     /* ============================================ */
     /* INFO ROWS                                     */
@@ -6323,7 +6331,7 @@
 
     <!-- COUNTDOWN -->
     <div class="glass-card countdown-card" id="countdownBox">
-      <div class="card-eyebrow">მასტერკლასამდე დარჩა</div>
+      <div class="card-eyebrow">ზეიმამდე დარჩა</div>
       <div class="countdown-grid">
         <div class="cd-item">
           <span class="cd-num" id="cdDays">0</span>
@@ -7802,16 +7810,42 @@
       }
       wrap.style.display = "flex";
       wrap.innerHTML = "";
+      const cfg = lastConfig || {};
       for (let b = 1; b <= busCountCfg; b++) {
         const taken = (occupiedSeatsByBus[String(b)] || []).length;
         const free = Math.max(0, busSeatsCfg - taken);
+        const city = String(cfg["bus_" + b + "_city"] || "").trim();
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "bus-switch-btn" + (b === selectedBus ? " active" : "");
-        btn.innerHTML = "🚌 ავტობუსი " + b +
+        btn.innerHTML = "🚌 " + (city ? city : "ავტობუსი " + b) +
           '<span class="bs-count">' + free + " თავისუფალი</span>";
         btn.addEventListener("click", function () { selectBus(b); });
         wrap.appendChild(btn);
+      }
+
+      /* არჩეული ავტობუსის გასვლის ინფო: ქალაქი · ლოკაცია · დრო · რუკა */
+      const dCity = String(cfg["bus_" + selectedBus + "_city"] || "").trim();
+      const dLoc = String(cfg["bus_" + selectedBus + "_location"] || "").trim();
+      const dTime = String(cfg["bus_" + selectedBus + "_time"] || "").trim();
+      const dMap = String(cfg["bus_" + selectedBus + "_map"] || "").trim();
+      const parts = [dCity, dLoc, dTime ? "გასვლა " + dTime : ""].filter(Boolean);
+      if (parts.length) {
+        const info = document.createElement("div");
+        info.className = "bus-switch-info";
+        const span = document.createElement("span");
+        span.textContent = "📍 " + parts.join(" · ");
+        info.appendChild(span);
+        if (/^https?:\/\//i.test(dMap)) {
+          const a = document.createElement("a");
+          a.href = dMap;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.textContent = " რუკა ↗";
+          a.style.color = "#e8c468";
+          info.appendChild(a);
+        }
+        wrap.appendChild(info);
       }
     }
 
@@ -10724,6 +10758,22 @@
           confetti({ particleCount: 60, spread: 110, origin: { x: 0.5, y: 0.35 }, colors: gold, ticks: 200, scalar: 0.8 });
         }, 450);
       }, 1100);
+
+      /* 🎆 უწყვეტი ფეიერვერკები — ყოველ ~8 წამში მცირე ზალპი შემთხვევითი ადგილიდან */
+      setInterval(function () {
+        if (document.hidden) return;
+        confetti({
+          particleCount: 20 + Math.floor(Math.random() * 18),
+          angle: 55 + Math.random() * 70,
+          spread: 55 + Math.random() * 45,
+          startVelocity: 28 + Math.random() * 14,
+          origin: { x: 0.08 + Math.random() * 0.84, y: 0.45 + Math.random() * 0.35 },
+          colors: gold,
+          ticks: 170,
+          scalar: 0.75,
+          gravity: 0.9
+        });
+      }, 8000);
     });
   </script>
 </body>
